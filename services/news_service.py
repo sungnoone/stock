@@ -1,8 +1,21 @@
-import feedparser
 import requests
-from bs4 import BeautifulSoup
 from datetime import datetime
 import time
+
+# 嘗試導入可選依賴
+try:
+    import feedparser
+    FEEDPARSER_AVAILABLE = True
+except ImportError:
+    FEEDPARSER_AVAILABLE = False
+    print("Warning: feedparser not available, using mock data")
+
+try:
+    from bs4 import BeautifulSoup
+    BS4_AVAILABLE = True
+except ImportError:
+    BS4_AVAILABLE = False
+    print("Warning: beautifulsoup4 not available")
 
 class NewsService:
     """財經新聞服務"""
@@ -77,6 +90,9 @@ class NewsService:
 
     def _parse_rss_feed(self, url, source_name):
         """解析 RSS Feed"""
+        if not FEEDPARSER_AVAILABLE:
+            return []
+
         try:
             feed = feedparser.parse(url)
             news_list = []

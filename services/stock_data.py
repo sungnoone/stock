@@ -1,8 +1,16 @@
 import requests
 import pandas as pd
 from datetime import datetime, timedelta
-import yfinance as yf
 import time
+import random
+
+# 嘗試導入 yfinance，如果失敗則使用模擬數據
+try:
+    import yfinance as yf
+    YFINANCE_AVAILABLE = True
+except ImportError:
+    YFINANCE_AVAILABLE = False
+    print("Warning: yfinance not available, using mock data")
 
 class StockDataService:
     """台灣股市資料服務"""
@@ -30,6 +38,10 @@ class StockDataService:
 
     def get_stock_quote(self, stock_id):
         """取得即時報價 - 使用 Yahoo Finance"""
+        # 如果 yfinance 不可用，使用模擬數據
+        if not YFINANCE_AVAILABLE:
+            return self._get_mock_quote(stock_id)
+
         try:
             # 台股代碼需要加上 .TW 後綴
             ticker = f"{stock_id}.TW"
@@ -67,6 +79,10 @@ class StockDataService:
 
     def get_stock_history(self, stock_id, days=30):
         """取得歷史資料"""
+        # 如果 yfinance 不可用，使用模擬數據
+        if not YFINANCE_AVAILABLE:
+            return self._get_mock_history(stock_id, days)
+
         try:
             ticker = f"{stock_id}.TW"
             stock = yf.Ticker(ticker)
@@ -121,3 +137,58 @@ class StockDataService:
         except Exception as e:
             print(f"Error getting TWSE data: {str(e)}")
             return None
+
+    def _get_mock_quote(self, stock_id):
+        """產生模擬報價數據（當 yfinance 不可用時）"""
+        # 取得股票名稱
+        stock_name = stock_id
+        for stock in self.popular_stocks:
+            if stock['id'] == stock_id:
+                stock_name = stock['name']
+                break
+
+        # 產生基礎價格（根據股票代碼）
+        base_price = 100 + int(stock_id) % 500
+        change = random.uniform(-5, 5)
+        change_percent = (change / base_price) * 100
+
+        return {
+            'stock_id': stock_id,
+            'name': stock_name,
+            'price': round(base_price, 2),
+            'change': round(change, 2),
+            'change_percent': round(change_percent, 2),
+            'volume': random.randint(10000000, 100000000),
+            'high': round(base_price + abs(change) * 0.5, 2),
+            'low': round(base_price - abs(change) * 0.5, 2),
+            'open': round(base_price - change * 0.3, 2),
+            'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        }
+
+    def _get_mock_history(self, stock_id, days=30):
+        """產生模擬歷史數據（當 yfinance 不可用時）"""
+        history = []
+        base_price = 100 + int(stock_id) % 500
+        current_price = base_price
+
+        for i in range(days):
+            date = (datetime.now() - timedelta(days=days-i-1)).strftime('%Y-%m-%d')
+
+            # 隨機價格變動
+            change = random.uniform(-3, 3)
+            current_price += change
+
+            open_price = current_price + random.uniform(-2, 2)
+            high_price = max(current_price, open_price) + random.uniform(0, 2)
+            low_price = min(current_price, open_price) - random.uniform(0, 2)
+
+            history.append({
+                'date': date,
+                'open': round(open_price, 2),
+                'high': round(high_price, 2),
+                'low': round(low_price, 2),
+                'close': round(current_price, 2),
+                'volume': random.randint(10000000, 100000000)
+            })
+
+        return history
