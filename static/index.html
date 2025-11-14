@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>台灣股市分析平台</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📈 台灣股市分析平台</h1>
+            <p class="subtitle">即時行情 · 技術分析 · 財經新聞</p>
+        </header>
+
+        <main>
+            <!-- 股票選擇區 -->
+            <section class="stock-selector">
+                <h2>熱門股票</h2>
+                <div id="stockList" class="stock-list">
+                    <div class="loading">載入中...</div>
+                </div>
+            </section>
+
+            <!-- 股票資訊區 -->
+            <section class="stock-info" id="stockInfo" style="display: none;">
+                <h2 id="stockTitle">股票資訊</h2>
+
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3>即時報價</h3>
+                        <div id="quoteInfo" class="quote-info">
+                            <div class="loading">選擇股票以查看報價</div>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>技術分析建議</h3>
+                        <div id="analysisInfo" class="analysis-info">
+                            <div class="loading">選擇股票以查看分析</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 價格走勢圖 -->
+                <div class="chart-container">
+                    <h3>價格走勢圖</h3>
+                    <canvas id="priceChart"></canvas>
+                </div>
+
+                <!-- 技術指標 -->
+                <div class="indicators-container">
+                    <h3>技術指標</h3>
+                    <div id="indicators" class="indicators">
+                        <div class="loading">載入中...</div>
+                    </div>
+                </div>
+
+                <!-- 相關新聞 -->
+                <div class="news-container">
+                    <h3>相關新聞</h3>
+                    <div id="stockNews" class="news-list">
+                        <div class="loading">載入中...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 市場新聞區 -->
+            <section class="market-news">
+                <h2>財經新聞</h2>
+                <div id="marketNews" class="news-list">
+                    <div class="loading">載入中...</div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>資料來源：Yahoo Finance | 本平台僅供參考，不構成投資建議</p>
+        </footer>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
